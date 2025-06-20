@@ -1,43 +1,15 @@
 const express = require('express');
-const app = express();
+const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
 
-const PORT = 3000;
-
-// Import route pembelian
-const buyRoute = require('./routes/buy');
-
-// Middleware: parsing JSON body dari frontend
+const app = express();
+app.use(cors());
 app.use(express.json());
 
-// Endpoint pembelian token
+const buyRoute = require('./routes/buy');
 app.use('/buy', buyRoute);
 
-// Endpoint status penjualan (opsional untuk statistik frontend)
-app.get('/status', (req, res) => {
-  const buyersPath = path.join(__dirname, 'data/buyers.json');
-  const buyers = fs.existsSync(buyersPath)
-    ? JSON.parse(fs.readFileSync(buyersPath))
-    : [];
-
-  const totalSold = buyers.reduce((sum, b) => sum + b.amount, 0);
-  const totalBuyers = new Set(buyers.map(b => b.walletAddress)).size;
-
-  res.json({
-    status: '✅ Online',
-    totalSold,
-    totalBuyers,
-    remaining: 15000000 - totalSold
-  });
-});
-
-// Tes endpoint root
-app.get('/', (req, res) => {
-  res.send('✅ Backend presale LANCIPS aktif!');
-});
-
-// Jalankan server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server jalan di http://localhost:${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });
