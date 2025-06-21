@@ -2,7 +2,7 @@
   "name": "backend_lancips",
   "version": "1.0.0",
   "description": "Backend presale token LANCIPS",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "start": "node app.js"
   },
