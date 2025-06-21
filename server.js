@@ -14,7 +14,7 @@ const MAX_TOKENS_PER_WALLET = 15000000;
 const TOTAL_SUPPLY = 15000000;
 const PAY_TO_ADDRESS = "7VJHv1UNSCoxdNmboxLrjMj1FgyaGdSELK9Eo4iaPVC8";
 
-// Endpoint pembelian token
+// Endpoint buy
 app.post('/buy', (req, res) => {
   const { walletAddress, amount } = req.body;
 
@@ -61,12 +61,12 @@ app.post('/buy', (req, res) => {
   });
 });
 
-// Tes endpoint
+// Test endpoint
 app.get('/', (req, res) => {
   res.send('✅ LANCIPS backend is running!');
 });
 
-// Jalankan server
+// Server run
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
