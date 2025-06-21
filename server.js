@@ -61,6 +61,20 @@ app.post('/buy', (req, res) => {
   });
 });
 
+// Endpoint total raised
+app.get('/total-raised', (req, res) => {
+  const filePath = path.join(__dirname, 'data/buyers.json');
+
+  if (!fs.existsSync(filePath)) {
+    return res.json({ totalRaised: 0 });
+  }
+
+  const buyers = JSON.parse(fs.readFileSync(filePath));
+  const totalRaised = buyers.reduce((sum, b) => sum + b.amount * TOKEN_PRICE, 0);
+
+  res.json({ totalRaised });
+});
+
 // Test endpoint
 app.get('/', (req, res) => {
   res.send('✅ LANCIPS backend is running!');
