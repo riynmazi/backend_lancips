@@ -70,8 +70,9 @@ app.get('/total-raised', (req, res) => {
   }
 
   const buyers = JSON.parse(fs.readFileSync(filePath));
-  const totalRaised = buyers.reduce((sum, b) => sum + b.amount * TOKEN_PRICE, 0);
+  const totalRaised = buyers.reduce((sum, b) => sum + parseFloat(b.amount) * TOKEN_PRICE, 0);
 
+  console.log("📊 Total raised:", totalRaised);
   res.json({ totalRaised });
 });
 
