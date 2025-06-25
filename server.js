@@ -10,8 +10,8 @@ app.use(express.json());
 
 // Konstanta
 const TOKEN_PRICE = 0.000005;
-const MAX_TOKENS_PER_WALLET = 15000000;
-const TOTAL_SUPPLY = 15000000;
+const MAX_TOKENS_PER_WALLET = 35000000;
+const TOTAL_SUPPLY = 35000000;
 const PAY_TO_ADDRESS = "7VJHv1UNSCoxdNmboxLrjMj1FgyaGdSELK9Eo4iaPVC8";
 
 // presale: 3 day
