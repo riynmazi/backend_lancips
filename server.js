@@ -8,11 +8,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Konstanta konfigurasi
+// Konstanta
 const TOKEN_PRICE = 0.000005;
 const MAX_TOKENS_PER_WALLET = 15000000;
 const TOTAL_SUPPLY = 15000000;
 const PAY_TO_ADDRESS = "7VJHv1UNSCoxdNmboxLrjMj1FgyaGdSELK9Eo4iaPVC8";
+
+// presale: 3 day
+const PRESALE_DURATION_MS = 3 * 24 * 60 * 60 * 1000;
+
+// presale time
+// update: new Date("2025-06-26T00:00:00Z")
+const presaleStartTime = new Date();
+
+// Endpoint presale end
+app.get('/presale-end', (req, res) => {
+  const endTime = new Date(presaleStartTime.getTime() + PRESALE_DURATION_MS);
+  res.json({ endTime: endTime.toISOString() });
+});
 
 // Endpoint buy
 app.post('/buy', (req, res) => {
@@ -20,6 +33,12 @@ app.post('/buy', (req, res) => {
 
   if (!walletAddress || !amount || amount <= 0) {
     return res.status(400).json({ error: 'Invalid request' });
+  }
+
+  const now = new Date();
+  const endTime = new Date(presaleStartTime.getTime() + PRESALE_DURATION_MS);
+  if (now > endTime) {
+    return res.status(400).json({ error: '⛔ Presale has ended' });
   }
 
   const filePath = path.join(__dirname, 'data/buyers.json');
