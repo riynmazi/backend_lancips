@@ -8,41 +8,34 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Konstanta
+// Constants
 const TOKEN_PRICE = 0.000005;
 const MAX_TOKENS_PER_WALLET = 35000000;
 const TOTAL_SUPPLY = 35000000;
 const PAY_TO_ADDRESS = "7VJHv1UNSCoxdNmboxLrjMj1FgyaGdSELK9Eo4iaPVC8";
 
-// presale: 3 day
+// Presale config (now ignored, no time limit)
 const PRESALE_DURATION_MS = 3 * 24 * 60 * 60 * 1000;
-
-// presale time
-// update: new Date("2025-06-26T00:00:00Z")
 const presaleStartTime = new Date();
 
-// Endpoint presale end
+// This endpoint is unused if you remove countdown from frontend
 app.get('/presale-end', (req, res) => {
   const endTime = new Date(presaleStartTime.getTime() + PRESALE_DURATION_MS);
   res.json({ endTime: endTime.toISOString() });
 });
 
-// Endpoint buy
+// Purchase endpoint (⛔ time check removed)
 app.post('/buy', (req, res) => {
   const { walletAddress, amount } = req.body;
 
+  // Validate input
   if (!walletAddress || !amount || amount <= 0) {
     return res.status(400).json({ error: 'Invalid request' });
   }
 
-  const now = new Date();
-  const endTime = new Date(presaleStartTime.getTime() + PRESALE_DURATION_MS);
-  if (now > endTime) {
-    return res.status(400).json({ error: '⛔ Presale has ended' });
-  }
-
   const filePath = path.join(__dirname, 'data/buyers.json');
 
+  // Create buyers file if it doesn't exist
   if (!fs.existsSync(filePath)) {
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.writeFileSync(filePath, '[]');
@@ -51,10 +44,12 @@ app.post('/buy', (req, res) => {
   let buyers = JSON.parse(fs.readFileSync(filePath));
   const totalSold = buyers.reduce((sum, b) => sum + b.amount, 0);
 
+  // Check supply limit
   if (totalSold + amount > TOTAL_SUPPLY) {
     return res.status(400).json({ error: '❌ Token sold out or not enough left' });
   }
 
+  // Check wallet limit
   const buyer = buyers.find(b => b.walletAddress === walletAddress);
   const current = buyer ? buyer.amount : 0;
   const updated = current + amount;
@@ -63,6 +58,7 @@ app.post('/buy', (req, res) => {
     return res.status(400).json({ error: '❌ Max 15,000,000 tokens per wallet' });
   }
 
+  // Save purchase
   if (buyer) {
     buyer.amount = updated;
   } else {
@@ -80,7 +76,7 @@ app.post('/buy', (req, res) => {
   });
 });
 
-// Endpoint total raised
+// Total raised endpoint
 app.get('/total-raised', (req, res) => {
   const filePath = path.join(__dirname, 'data/buyers.json');
 
@@ -100,7 +96,7 @@ app.get('/', (req, res) => {
   res.send('✅ LANCIPS backend is running!');
 });
 
-// Server run
+// Start server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
