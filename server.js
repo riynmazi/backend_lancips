@@ -9,8 +9,8 @@ app.use(cors());
 app.use(express.json());
 
 // Constants
-const TOKEN_PRICE = 0.000005;
-const MAX_TOKENS_PER_WALLET = 35000000;
+const TOKEN_PRICE = 0.00001;
+const MAX_TOKENS_PER_WALLET = 500000;
 const TOTAL_SUPPLY = 35000000;
 const PAY_TO_ADDRESS = "7VJHv1UNSCoxdNmboxLrjMj1FgyaGdSELK9Eo4iaPVC8";
 
@@ -55,7 +55,7 @@ app.post('/buy', (req, res) => {
   const updated = current + amount;
 
   if (updated > MAX_TOKENS_PER_WALLET) {
-    return res.status(400).json({ error: '❌ Max 15,000,000 tokens per wallet' });
+    return res.status(400).json({ error: '❌ Max 500,000 tokens per wallet' });
   }
 
   // Save purchase
